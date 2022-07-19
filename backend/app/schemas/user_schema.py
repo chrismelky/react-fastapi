@@ -1,9 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
 
 class UserBase(BaseModel):
-    email: str
-    first_name: str | None
+    email: EmailStr
+    first_name: str 
     last_name: Optional[str]
     is_active: bool = True
 

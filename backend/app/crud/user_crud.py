@@ -3,15 +3,13 @@ from schemas.user_schema import UserCreate, UserUpdate
 from crud.base_crud import BaseCrud
 from models.user_model import User
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
 
 class UserCrud(BaseCrud[User, UserCreate, UserUpdate]):
 
     def create(self, db: Session, in_obj: UserCreate) -> User:
         db_object = User(
-            first_name= in_obj.first_name,
-            last_name = in_obj.last_name,
-            email = in_obj.email,
-            is_active = in_obj.is_active,
+            **jsonable_encoder(in_obj),
             password_hash = get_password_hash("Secret1234")
         )
         db.add(db_object)

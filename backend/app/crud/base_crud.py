@@ -22,6 +22,9 @@ class BaseCrud(Generic[ModelType,CreateModelType,UpdateModelType]):
         total = query.count()
         result = query.offset(0).limit(size).all()
         return (total, result)
+    
+    def find_by_id(self, db: Session, id)->ModelType | None:
+        return db.query(self.model).filter(ModelType.id == id).first()
 
 
     def allQuery(self, db: Session, columns:str | None = None, search = {}) -> Query:
@@ -36,11 +39,19 @@ class BaseCrud(Generic[ModelType,CreateModelType,UpdateModelType]):
 
     def create(self, db: Session, in_obj: CreateModelType)->ModelType:
         in_obj_data = jsonable_encoder(in_obj)
-        print(in_obj_data)
         db_obj = self.model(**in_obj_data)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
+    
+    def update(self, db: Session, db_object, in_object)->ModelType:
+        db_obj_data = jsonable_encoder(db_object)
+
+    def remove(self, db:Session, id: int):
+        obj = db.query(self.model).get(id)
+        db.delete(obj)
+        db.commit()
+
 
     

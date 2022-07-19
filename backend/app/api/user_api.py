@@ -3,8 +3,8 @@ from core.exception import CustomBadRequestException
 
 from schemas import custom_response
 from schemas.custom_response import CustomResponse
-from schemas.user_schema import User, UserCreate
-from fastapi import APIRouter, Depends, Request,HTTPException
+from schemas.user_schema import User, UserCreate, UserUpdate
+from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.orm import Session
 from api import deps
 from crud.user_crud import userCrud
@@ -39,8 +39,18 @@ def create(in_user: UserCreate, db: Session = Depends(deps.get_db)):
         return CustomResponse(data=result, message='User created successfully')
 
     except:
-        raise HTTPException(
-            status_code = 400,
-            detail = "Error"
+        raise CustomBadRequestException(
+            message = "Whoops! something went wrong"
         )
 
+
+@router.put('/{id}')
+def update(id:int, in_user: UserUpdate, db: Session = Depends(deps.get_db)):
+    user = userCrud.find_by_id(db, id)
+    if not user:
+        raise HTTPException(
+            status_code = 404,
+            detail = "User not found"
+        )
+    result = userCrud.u
+    
